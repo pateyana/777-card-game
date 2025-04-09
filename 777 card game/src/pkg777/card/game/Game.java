@@ -1,11 +1,8 @@
-/**
- * SYST 17796 Project Base code.
- * Students can modify and extend to implement their game.
- * Add your name as an author and the date!
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package pkg777.card.game;
-
-import java.util.ArrayList;
 
 /**
  * The class that models your game. You should create a more specific child of this class and instantiate the methods
@@ -13,46 +10,95 @@ import java.util.ArrayList;
  *
  * @author dancye
  * @author Paul Bonenfant Jan 2020
+ * @modifier: group 9
  */
-public abstract class Game {
 
-    private final String name;//the title of the game
-    private ArrayList<Player> players;// the players of the game
+import java.util.ArrayList;
+import java.util.List;
 
-    public Game(String name) {
-        this.name = name;
-        players = new ArrayList();
+public class Game {
+    private Player[] players;
+    private GroupOfCards deck;
+    private Card[] discardPile;
+    private int currentPlayerIndex;
+
+    public Game(List<Player> players) {
+        this.players = players.toArray(new Player[0]);
+        this.deck = new GroupOfCards();
+        this.discardPile = new Card[0];
+        this.currentPlayerIndex = 0;
     }
 
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
+    public void setPlayers(ArrayList<Player> players) {
+        this.players = players.toArray(new Player[0]);
     }
 
-    /**
-     * @return the players of this game
-     */
-    public ArrayList<Player> getPlayers() {
+    public Player[] getPlayers() {
         return players;
     }
 
-    /**
-     * @param players the players of this game
-     */
-    public void setPlayers(ArrayList<Player> players) {
-        this.players = players;
+    public GroupOfCards getDeck() {
+        return deck;
     }
 
-    /**
-     * Play the game. This might be one method or many method calls depending on your game.
-     */
-    public abstract void play();
+    public Card getTopDiscard() {
+        if (discardPile.length == 0) return null;
+        return discardPile[discardPile.length - 1];
+    }
 
-    /**
-     * When the game is over, use this method to declare and display a winning player.
-     */
-    public abstract void declareWinner();
+    public String getName() {
+        return "777 Card Game";
+    }
 
-}//end class
+    public void startGame() {
+        deck.initializeDeck();
+        deck.shuffle();
+        for (Player player : players) {
+            for (int i = 0; i < 7; i++) {
+                player.addCard(deck.drawCard());
+            }
+        }
+        discardPile = new Card[]{deck.drawCard()};
+    }
+
+    public void playTurn(Player player, Card cardToPlay) {
+        if (isPlayable(cardToPlay)) {
+            player.playCard(cardToPlay);
+            addToDiscardPile(cardToPlay);
+            System.out.println(player.getName() + " played: " + cardToPlay);
+        } else {
+            System.out.println("Card not playable. Drawing from deck...");
+            player.addCard(deck.drawCard());
+        }
+    }
+
+    public void nextTurn() {
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+    }
+
+    public Player getCurrentPlayer() {
+        return players[currentPlayerIndex];
+    }
+
+    public boolean isPlayable(Card card) {
+        Card topCard = getTopDiscard();
+        return card.getRank() == topCard.getRank() || card.getSuit() == topCard.getSuit();
+    }
+
+    private void addToDiscardPile(Card card) {
+        Card[] newDiscardPile = new Card[discardPile.length + 1];
+        System.arraycopy(discardPile, 0, newDiscardPile, 0, discardPile.length);
+        newDiscardPile[discardPile.length] = card;
+        discardPile = newDiscardPile;
+    }
+
+    public boolean checkForWinner() {
+        for (Player player : players) {
+            if (player.getHand().isEmpty()) {
+                System.out.println(player.getName() + " wins the game!");
+                return true;
+            }
+        }
+        return false;
+    }
+}
