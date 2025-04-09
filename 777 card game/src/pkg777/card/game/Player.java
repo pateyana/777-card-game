@@ -1,7 +1,6 @@
-/**
- * SYST 17796 Project Base code.
- * Students can modify and extend to implement their game.
- * Add your name as an author and the date!
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package pkg777.card.game;
 
@@ -10,40 +9,65 @@ package pkg777.card.game;
  *
  * @author dancye
  * @author Paul Bonenfant Jan 2020
+ * @modifier: group 9
  */
-public abstract class Player {
+import java.util.ArrayList;
 
-    private String name; //the unique name for this player
+public class Player {
+    private String name;
+    private Card[] hand;
 
-    /**
-     * A constructor that allows you to set the player's unique ID
-     *
-     * @param name the unique ID to assign to this player.
-     */
     public Player(String name) {
         this.name = name;
+        this.hand = new Card[0];
     }
 
-    /**
-     * @return the player name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * Ensure that the playerID is unique
-     *
-     * @param name the player name to set
-     */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * The method to be overridden when you subclass the Player class with your specific type of Player and filled in
-     * with logic to play your game.
-     */
-    public abstract void play();
+    public ArrayList<Card> getHand() {
+        ArrayList<Card> handList = new ArrayList<>();
+        for (Card c : hand) {
+            handList.add(c);
+        }
+        return handList;
+    }
 
+    public void addCard(Card card) {
+        Card[] newHand = new Card[hand.length + 1];
+        System.arraycopy(hand, 0, newHand, 0, hand.length);
+        newHand[hand.length] = card;
+        hand = newHand;
+    }
+
+    public void removeCard(Card card) {
+        ArrayList<Card> list = new ArrayList<>();
+        for (Card c : hand) {
+            if (!c.equals(card)) {
+                list.add(c);
+            }
+        }
+        hand = list.toArray(new Card[0]);
+    }
+
+    public void showHand() {
+        for (int i = 0; i < hand.length; i++) {
+            System.out.println(i + ": " + hand[i]);
+        }
+    }
+
+    public boolean playCard(Card card) {
+        for (Card c : hand) {
+            if (c.equals(card)) {
+                removeCard(card);
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -1,55 +1,64 @@
-/**
- * SYST 17796 Project Base code.
- * Students can modify and extend to implement their game.
- * Add your name as an author and the date!
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package pkg777.card.game;
-
-import java.util.ArrayList;
-import java.util.Collections;
-
 /**
  * A concrete class that represents any grouping of cards for a Game. HINT, you might want to subclass this more than
  * once. The group of cards has a maximum size attribute which is flexible for reuse.
  *
  * @author dancye
  * @author Paul Bonenfant Jan 2020
+ * @modifier: group 9
  */
-public class GroupOfCards {
 
-    //The group of cards, stored in an ArrayList
-    private ArrayList<Card> cards;
-    private int size;//the size of the grouping
+import java.util.ArrayList;
+import java.util.Collections;
 
-    public GroupOfCards(int size) {
-        this.size = size;
+public class GroupOfCards{
+    private int size;
+    private Card[] cards;
+
+    public GroupOfCards() {
+        this.size = 52;
+        this.cards = new Card[0];
     }
 
-    /**
-     * A method that will get the group of cards as an ArrayList
-     *
-     * @return the group of cards.
-     */
-    public ArrayList<Card> getCards() {
-        return cards;
-    }
-
-    public void shuffle() {
-        Collections.shuffle(cards);
-    }
-
-    /**
-     * @return the size of the group of cards
-     */
     public int getSize() {
         return size;
     }
 
-    /**
-     * @param size the max size for the group of cards
-     */
     public void setSize(int size) {
         this.size = size;
     }
 
-}//end class
+    public Card[] getCards() {
+        return cards;
+    }
+
+    public void shuffle() {
+        ArrayList<Card> cardList = new ArrayList<>();
+        Collections.addAll(cardList, cards);
+        Collections.shuffle(cardList);
+        cards = cardList.toArray(new Card[0]);
+    }
+
+    public void initializeDeck() {
+        ArrayList<Card> cardList = new ArrayList<>();
+        for (Suit suit : Suit.values()) {
+            for (Rank rank : Rank.values()) {
+                cardList.add(new Card(rank, suit) {});
+            }
+        }
+        cards = cardList.toArray(new Card[0]);
+    }
+
+    public Card drawCard() {
+        if (cards.length == 0) return null;
+        Card top = cards[0];
+        Card[] newCards = new Card[cards.length - 1];
+        System.arraycopy(cards, 1, newCards, 0, newCards.length);
+        cards = newCards;
+        return top;
+    }
+}
